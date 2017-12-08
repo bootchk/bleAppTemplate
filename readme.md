@@ -38,6 +38,10 @@ Edit .ld RAM 0x2100, 0xdf00
 
 (not working, no services advertised.)
 
+create facade class AdModule
+
+(still not working) 
+
 
 
 

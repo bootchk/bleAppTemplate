@@ -81,7 +81,9 @@
 
 // Facade
 #include "service.h"
-//#include "characteristic.h"
+#include "adModule.h"
+
+#define OLD 1
 
 #define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2    /**< Reply when unsupported features are requested. */
 
@@ -114,8 +116,12 @@
 #define DEAD_BEEF                       0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
 
 
-NRF_BLE_GATT_DEF(m_gatt);                                                       /**< GATT module instance. */
+NRF_BLE_GATT_DEF(m_gatt);    /**< GATT module instance. */
+
+#ifdef OLD
 BLE_ADVERTISING_DEF(m_advertising);                                             /**< Advertising module instance. */
+#endif
+
 
 static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        /**< Handle of the current connection. */
 
@@ -124,13 +130,14 @@ static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        
  */
 
 // YOUR_JOB: Use UUIDs for service(s) used in your application.
+#ifdef OLD
 static ble_uuid_t m_adv_uuids[] =                                               /**< Universally unique service identifiers. */
 {
     {BLE_UUID_DEVICE_INFORMATION_SERVICE, BLE_UUID_TYPE_BLE}
 };
 
-
 static void advertising_start(bool erase_bonds);
+#endif
 
 
 /**@brief Callback function for asserts in the SoftDevice.
@@ -206,7 +213,7 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 
         case PM_EVT_PEERS_DELETE_SUCCEEDED:
         {
-            advertising_start(false);
+            AdModule::startAdvertising(false);	// advertising_start(false);
         } break;
 
         case PM_EVT_LOCAL_DB_CACHE_APPLY_FAILED:
@@ -344,6 +351,7 @@ static void on_yys_evt(ble_yy_service_t     * p_yy_service,
 
 /**@brief Function for initializing services that will be used by the application.
  */
+#ifdef OLD
 static void services_init(void)
 {
     /* YOUR_JOB: Add code to initialize the services used by the application.
@@ -370,7 +378,7 @@ static void services_init(void)
        APP_ERROR_CHECK(err_code);
      */
 }
-
+#endif
 
 /**@brief Function for handling the Connection Parameters Module.
  *
@@ -466,6 +474,7 @@ static void sleep_mode_enter(void)
  *
  * @param[in] ble_adv_evt  Advertising event.
  */
+#ifdef OLD
 static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
 {
     ret_code_t err_code;
@@ -486,7 +495,7 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
             break;
     }
 }
-
+#endif
 
 /**@brief Function for handling BLE events.
  *
@@ -642,6 +651,7 @@ static void peer_manager_init(void)
 }
 
 
+#ifdef OLD
 /**@brief Clear bond information from persistent storage.
  */
 static void delete_bonds(void)
@@ -653,6 +663,9 @@ static void delete_bonds(void)
     err_code = pm_peers_delete();
     APP_ERROR_CHECK(err_code);
 }
+#else
+// Referenced from AdModule, should be restored? or PeerManager excised.
+#endif
 
 
 /**@brief Function for handling events from the BSP module.
@@ -681,11 +694,15 @@ static void bsp_event_handler(bsp_event_t event)
         case BSP_EVENT_WHITELIST_OFF:
             if (m_conn_handle == BLE_CONN_HANDLE_INVALID)
             {
-                err_code = ble_advertising_restart_without_whitelist(&m_advertising);
+#ifdef OLD
+            	err_code = ble_advertising_restart_without_whitelist(&m_advertising);
                 if (err_code != NRF_ERROR_INVALID_STATE)
                 {
                     APP_ERROR_CHECK(err_code);
                 }
+#else
+                AdModule::restartWithoutWhitelist();
+#endif
             }
             break; // BSP_EVENT_KEY_0
 
@@ -697,6 +714,7 @@ static void bsp_event_handler(bsp_event_t event)
 
 /**@brief Function for initializing the Advertising functionality.
  */
+#ifdef OLD
 static void advertising_init(void)
 {
     ret_code_t             err_code;
@@ -721,7 +739,7 @@ static void advertising_init(void)
 
     ble_advertising_conn_cfg_tag_set(&m_advertising, APP_BLE_CONN_CFG_TAG);
 }
-
+#endif
 
 /**@brief Function for initializing buttons and leds.
  *
@@ -761,7 +779,7 @@ static void power_manage(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
+#ifdef OLD
 /**@brief Function for starting advertising.
  */
 static void advertising_start(bool erase_bonds)
@@ -778,7 +796,7 @@ static void advertising_start(bool erase_bonds)
         APP_ERROR_CHECK(err_code);
     }
 }
-
+#endif
 
 /**@brief Function for application main entry.
  */
@@ -794,13 +812,14 @@ int main(void)
     gap_params_init();
     gatt_init();
 
-    // OLD advertising_init();
-    // OLD services_init();
-
+#ifdef OLD
+    advertising_init();
+    services_init();
+#else
+    AdModule::init();
     // Creating service also creates its characteristics
     Service::init();
-    Advertisment::init();
-    Advertiser::init();
+#endif
 
     conn_params_init();
     peer_manager_init();
@@ -809,7 +828,11 @@ int main(void)
     NRF_LOG_INFO("Template example started.");
     application_timers_start();
 
+#ifdef OLD
     advertising_start(erase_bonds);
+#else
+    AdModule::startAdvertising(erase_bonds);
+#endif
 
     // Enter main loop.
     for (;;)

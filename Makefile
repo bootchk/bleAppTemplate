@@ -80,6 +80,8 @@ SRC_FILES += \
   $(REF_DIR)/objects/service.cpp \
   $(REF_DIR)/objects/uuid.cpp \
   $(REF_DIR)/objects/characteristic.cpp \
+  $(REF_DIR)/objects/adModule.cpp \
+  
 
 # Include folders common to all targets
 INC_FOLDERS += \
