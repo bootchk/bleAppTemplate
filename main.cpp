@@ -79,11 +79,18 @@
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 
+// define this to restore the original example code
+//#define OLD 1
+
+
+#ifndef OLD
 // Facade
 #include "service.h"
 #include "adModule.h"
+#include "uuid.h"
+#endif
 
-#define OLD 1
+
 
 #define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2    /**< Reply when unsupported features are requested. */
 
@@ -816,6 +823,7 @@ int main(void)
     advertising_init();
     services_init();
 #else
+    Uuid::init();
     AdModule::init();
     // Creating service also creates its characteristics
     Service::init();
