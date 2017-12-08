@@ -1,11 +1,13 @@
 
 Hacked Nordic NRF SDK 14.2 ... examples/ble_peripheral/ble_app_template/pca1040/s132/armgcc/
 
+work in progress
+
 Log
 -
 
 Follow tutorial "Nordic Eclipse GCC"
-Later will follo tutorial "Custom Service and Characteristics"
+Later will follow tutorial "Custom Service and Characteristics"
 
 Create new "makefile" proj per tutorial
 
@@ -26,7 +28,7 @@ Move main.c from two levels up and edit makefile PROJ_DIR var ../../.. => .
 Change settings for auto discovery per tutorial.
 Create flash build targets per tutorial.
 
-(app flashes, advertises, and connects but no characteristics?)
+(app flashes, advertises, and connects but no service or characteristics?)
 
 Edit makefile REF_DIR to project multiProtocol/objects
 Edit makefile main.c => main.cpp
@@ -41,6 +43,8 @@ Edit .ld RAM 0x2100, 0xdf00
 create facade class AdModule
 
 (still not working) 
+
+define OLD to restore original code in main.cpp
 
 
 
