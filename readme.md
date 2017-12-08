@@ -22,3 +22,8 @@ Put under source code control (in directory ../s132/armgcc
 Initial commit
 
 Move main.c from two levels up and edit makefile PROJ_DIR var ../../.. => .
+
+Change settings for auto discovery per tutorial.
+Create flash build targets per tutorial.
+
+(app flashes, advertises, and connects but no characteristics?)
