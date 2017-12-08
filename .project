@@ -30,10 +30,5 @@
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
-		<link>
-			<name>src/main.c</name>
-			<type>1</type>
-			<location>/home/bootch/nRF5_SDK_14.2.0_17b948a/examples/ble_peripheral/ble_app_template/main.c</location>
-		</link>
 	</linkedResources>
 </projectDescription>

@@ -3,7 +3,7 @@ TARGETS          := nrf52832_xxaa
 OUTPUT_DIRECTORY := _build
 
 SDK_ROOT := ../../../../../..
-PROJ_DIR := ../../..
+PROJ_DIR := .
 
 $(OUTPUT_DIRECTORY)/nrf52832_xxaa.out: \
   LINKER_SCRIPT  := ble_app_template_gcc_nrf52.ld
