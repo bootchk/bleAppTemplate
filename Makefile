@@ -5,6 +5,9 @@ OUTPUT_DIRECTORY := _build
 SDK_ROOT := ../../../../../..
 PROJ_DIR := .
 
+# Referenced directory in another project under separate version control
+REF_DIR := /home/bootch/git/multiProtocol/src
+
 $(OUTPUT_DIRECTORY)/nrf52832_xxaa.out: \
   LINKER_SCRIPT  := ble_app_template_gcc_nrf52.ld
 
@@ -46,7 +49,6 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/bsp/bsp.c \
   $(SDK_ROOT)/components/libraries/bsp/bsp_btn_ble.c \
   $(SDK_ROOT)/components/libraries/bsp/bsp_nfc.c \
-  $(PROJ_DIR)/main.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
@@ -72,6 +74,12 @@ SRC_FILES += \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_ble.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_soc.c \
+  
+SRC_FILES += \
+  $(PROJ_DIR)/main.cpp \
+  $(REF_DIR)/objects/service.cpp \
+  $(REF_DIR)/objects/uuid.cpp \
+  $(REF_DIR)/objects/characteristic.cpp \
 
 # Include folders common to all targets
 INC_FOLDERS += \
@@ -188,6 +196,9 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/ble/ble_services/ble_rscs \
   $(SDK_ROOT)/components/drivers_nrf/usbd \
   $(SDK_ROOT)/components/ble/ble_services/ble_hrs \
+
+INC_FOLDERS += \
+  $(REF_DIR)/objects \
 
 # Libraries common to all targets
 LIB_FILES += \

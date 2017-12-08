@@ -79,6 +79,9 @@
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
 
+// Facade
+#include "service.h"
+//#include "characteristic.h"
 
 #define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2    /**< Reply when unsupported features are requested. */
 
@@ -514,8 +517,8 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             NRF_LOG_DEBUG("PHY update request.");
             ble_gap_phys_t const phys =
             {
-                .rx_phys = BLE_GAP_PHY_AUTO,
-                .tx_phys = BLE_GAP_PHY_AUTO,
+            		tx_phys : BLE_GAP_PHY_AUTO,
+					rx_phys : BLE_GAP_PHY_AUTO,
             };
             err_code = sd_ble_gap_phy_update(p_ble_evt->evt.gap_evt.conn_handle, &phys);
             APP_ERROR_CHECK(err_code);
@@ -790,8 +793,15 @@ int main(void)
     ble_stack_init();
     gap_params_init();
     gatt_init();
-    advertising_init();
-    services_init();
+
+    // OLD advertising_init();
+    // OLD services_init();
+
+    // Creating service also creates its characteristics
+    Service::init();
+    Advertisment::init();
+    Advertiser::init();
+
     conn_params_init();
     peer_manager_init();
 

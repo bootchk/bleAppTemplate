@@ -26,9 +26,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>src</name>
+			<name>objects</name>
 			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
+			<location>/home/bootch/git/multiProtocol/src/objects</location>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -27,3 +27,19 @@ Change settings for auto discovery per tutorial.
 Create flash build targets per tutorial.
 
 (app flashes, advertises, and connects but no characteristics?)
+
+Edit makefile REF_DIR to project multiProtocol/objects
+Edit makefile main.c => main.cpp
+Rename main.c
+Edit makefile, add facade classes Service, etc.
+Reference facade classes in main.cpp
+Softlink from project dir to ../config/sdk_config.h
+Edit .ld RAM 0x2100, 0xdf00
+
+(not working, no services advertised.)
+
+
+
+
+
+
