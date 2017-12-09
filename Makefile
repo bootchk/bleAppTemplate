@@ -2,11 +2,16 @@ PROJECT_NAME     := ble_app_template_pca10040_s132
 TARGETS          := nrf52832_xxaa
 OUTPUT_DIRECTORY := _build
 
-SDK_ROOT := ../../../../../..
+# When project is located at directory of Makefile in SDK examples, sdk root is a relative path
+# SDK_ROOT := ../../../../../..
+
+# When project is located away from the SDK, sdk root is absolute
+SDK_ROOT := /home/bootch/nRF5_SDK_14.2.0_17b948a
+
 PROJ_DIR := .
 
 # Referenced directory in another project under separate version control
-REF_DIR := /home/bootch/git/multiProtocol/src
+REF_DIR := /home/bootch/git/multiProtocolNordic/src
 
 $(OUTPUT_DIRECTORY)/nrf52832_xxaa.out: \
   LINKER_SCRIPT  := ble_app_template_gcc_nrf52.ld
@@ -149,7 +154,6 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/drivers_nrf/timer \
   $(SDK_ROOT)/components/libraries/util \
   $(SDK_ROOT)/components/drivers_nrf/pwm \
-  ../config \
   $(SDK_ROOT)/components/libraries/csense_drv \
   $(SDK_ROOT)/components/libraries/csense \
   $(SDK_ROOT)/components/libraries/balloc \
@@ -198,6 +202,11 @@ INC_FOLDERS += \
   $(SDK_ROOT)/components/ble/ble_services/ble_rscs \
   $(SDK_ROOT)/components/drivers_nrf/usbd \
   $(SDK_ROOT)/components/ble/ble_services/ble_hrs \
+  
+# sdk_config.h hacked and located in project directory
+# ../config 
+INC_FOLDERS += \
+  $(PROJ_DIR)
 
 INC_FOLDERS += \
   $(REF_DIR)/objects \
@@ -206,7 +215,7 @@ INC_FOLDERS += \
 LIB_FILES += \
 
 # Optimization flags
-OPT = -O3 -g3
+OPT = -O0 -g3
 # Uncomment the line below to enable link time optimization
 #OPT += -flto
 
@@ -231,7 +240,7 @@ CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
 CFLAGS += -fno-builtin -fshort-enums 
 
 # C++ flags common to all targets
-CXXFLAGS += $(OPT)
+CXXFLAGS += $(OPT) -std=c++14
 
 # Assembler flags common to all targets
 ASMFLAGS += -g3

@@ -94,7 +94,19 @@ define OLD to restore original code in main.cpp
 
 fix missing call to Uuid::init() (now it seems to work.)
 
+sdk_config.h copied into project and hacked, instead of linked
 
+C++ flag -std=c++14 in Makefile
+
+(stopped working on another dev machine)
+
+Changed -O0 in Makefile
+
+(almost worked on another dev machine: scanned but crashed on connect
+
+Reverted to OLD (original) and still crashes
+
+Upgrade ARM tools to latest version 6.3.1 on other dev machine, now it seems to work again
 
 
 

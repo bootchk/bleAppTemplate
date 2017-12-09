@@ -220,7 +220,12 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
 
         case PM_EVT_PEERS_DELETE_SUCCEEDED:
         {
-            AdModule::startAdvertising(false);	// advertising_start(false);
+#ifdef OLD
+        	advertising_start(false);
+#else
+        	AdModule::startAdvertising(false);
+#endif
+
         } break;
 
         case PM_EVT_LOCAL_DB_CACHE_APPLY_FAILED:
