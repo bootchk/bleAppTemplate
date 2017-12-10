@@ -86,6 +86,12 @@ SRC_FILES += \
   $(REF_DIR)/objects/uuid.cpp \
   $(REF_DIR)/objects/characteristic.cpp \
   $(REF_DIR)/objects/adModule.cpp \
+  $(REF_DIR)/objects/softdevice.cpp \
+  $(REF_DIR)/objects/nrfLog.cpp \
+  $(REF_DIR)/objects/appTimer.cpp \
+  $(REF_DIR)/objects/softdeviceHandler.cpp \
+  $(REF_DIR)/objects/gap.cpp \
+  $(REF_DIR)/objects/appHandler.cpp \
   
 
 # Include folders common to all targets

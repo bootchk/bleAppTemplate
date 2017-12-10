@@ -108,6 +108,9 @@ Reverted to OLD (original) and still crashes
 
 Upgrade ARM tools to latest version 6.3.1 on other dev machine, now it seems to work again
 
+Get debug config to work. Change debug Executable to arm-none-eabi-gdb, else errors on gdb console.
+Enable RTT, disable UART in sdk_config.h
+
 
 
 

@@ -88,6 +88,9 @@
 #include "service.h"
 #include "adModule.h"
 #include "uuid.h"
+#include "softdevice.h"
+#include "nrfLog.h"
+#include "appTimer.h"
 #endif
 
 
@@ -164,6 +167,7 @@ void assert_nrf_callback(uint16_t line_num, const uint8_t * p_file_name)
 }
 
 
+#ifdef OLD
 /**@brief Function for handling Peer Manager events.
  *
  * @param[in] p_evt  Peer Manager event.
@@ -268,8 +272,9 @@ static void pm_evt_handler(pm_evt_t const * p_evt)
             break;
     }
 }
+#endif
 
-
+#ifdef OLD
 /**@brief Function for the Timer initialization.
  *
  * @details Initializes the timer module. This creates and starts application timers.
@@ -290,7 +295,7 @@ static void timers_init(void)
        err_code = app_timer_create(&m_app_timer_id, APP_TIMER_MODE_REPEATED, timer_timeout_handler);
        APP_ERROR_CHECK(err_code); */
 }
-
+#endif
 
 /**@brief Function for the GAP initialization.
  *
@@ -446,7 +451,7 @@ static void conn_params_init(void)
     APP_ERROR_CHECK(err_code);
 }
 
-
+#ifdef OLD
 /**@brief Function for starting timers.
  */
 static void application_timers_start(void)
@@ -457,7 +462,7 @@ static void application_timers_start(void)
        APP_ERROR_CHECK(err_code); */
 
 }
-
+#endif
 
 /**@brief Function for putting the chip into sleep mode.
  *
@@ -508,6 +513,9 @@ static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
     }
 }
 #endif
+
+#ifdef OLD
+Now handled by Softdevice class
 
 /**@brief Function for handling BLE events.
  *
@@ -601,8 +609,9 @@ static void ble_evt_handler(ble_evt_t const * p_ble_evt, void * p_context)
             break;
     }
 }
+#endif
 
-
+#ifdef OLD
 /**@brief Function for initializing the BLE stack.
  *
  * @details Initializes the SoftDevice and the BLE event interrupt.
@@ -627,8 +636,10 @@ static void ble_stack_init(void)
     // Register a handler for BLE events.
     NRF_SDH_BLE_OBSERVER(m_ble_observer, APP_BLE_OBSERVER_PRIO, ble_evt_handler, NULL);
 }
+#endif
 
 
+#ifdef OLD
 /**@brief Function for the Peer Manager initialization.
  */
 static void peer_manager_init(void)
@@ -661,7 +672,7 @@ static void peer_manager_init(void)
     err_code = pm_register(pm_evt_handler);
     APP_ERROR_CHECK(err_code);
 }
-
+#endif
 
 #ifdef OLD
 /**@brief Clear bond information from persistent storage.
@@ -772,6 +783,7 @@ static void buttons_leds_init(bool * p_erase_bonds)
 }
 
 
+#ifdef OLD
 /**@brief Function for initializing the nrf log module.
  */
 static void log_init(void)
@@ -781,7 +793,7 @@ static void log_init(void)
 
     NRF_LOG_DEFAULT_BACKENDS_INIT();
 }
-
+#endif
 
 /**@brief Function for the Power manager.
  */
@@ -817,10 +829,22 @@ int main(void)
     bool erase_bonds;
 
     // Initialize.
+
+#ifdef OLD
     log_init();
     timers_init();
+#else
+    NRFLog::enable();
+    AppTimer::init();
+#endif
+
+    // lkk bsp depends on timers init !!!
     buttons_leds_init(&erase_bonds);
+#ifdef OLD
     ble_stack_init();
+#else
+    Softdevice::enable();
+#endif
     gap_params_init();
     gatt_init();
 
@@ -835,13 +859,15 @@ int main(void)
 #endif
 
     conn_params_init();
+#ifdef OLD
+    // Module not used since I don't need bonding?
     peer_manager_init();
+#endif
 
-    // Start execution.
     NRF_LOG_INFO("Template example started.");
-    application_timers_start();
 
 #ifdef OLD
+    application_timers_start();
     advertising_start(erase_bonds);
 #else
     AdModule::startAdvertising(erase_bonds);
@@ -852,6 +878,7 @@ int main(void)
     {
         if (NRF_LOG_PROCESS() == false)
         {
+        	NRF_LOG_INFO("Sleep.");
             power_manage();
         }
     }
