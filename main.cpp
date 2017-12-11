@@ -84,13 +84,16 @@
 
 
 #ifndef OLD
-// Facade
+// Facades
 #include "service.h"
 #include "adModule.h"
 #include "uuid.h"
 #include "softdevice.h"
 #include "nrfLog.h"
 #include "appTimer.h"
+#include "gap.h"
+#include "gatt.h"
+#include "connection.h"
 #endif
 
 
@@ -297,6 +300,7 @@ static void timers_init(void)
 }
 #endif
 
+#ifdef OLD
 /**@brief Function for the GAP initialization.
  *
  * @details This function sets up all the necessary GAP (Generic Access Profile) parameters of the
@@ -329,8 +333,10 @@ static void gap_params_init(void)
     err_code = sd_ble_gap_ppcp_set(&gap_conn_params);
     APP_ERROR_CHECK(err_code);
 }
+#endif
 
 
+#ifdef OLD
 /**@brief Function for initializing the GATT module.
  */
 static void gatt_init(void)
@@ -338,6 +344,7 @@ static void gatt_init(void)
     ret_code_t err_code = nrf_ble_gatt_init(&m_gatt, NULL);
     APP_ERROR_CHECK(err_code);
 }
+#endif
 
 
 /**@brief Function for handling the YYY Service events.
@@ -397,6 +404,7 @@ static void services_init(void)
 }
 #endif
 
+#ifdef OLD
 /**@brief Function for handling the Connection Parameters Module.
  *
  * @details This function will be called for all events in the Connection Parameters Module which
@@ -450,6 +458,7 @@ static void conn_params_init(void)
     err_code = ble_conn_params_init(&cp_init);
     APP_ERROR_CHECK(err_code);
 }
+#endif
 
 #ifdef OLD
 /**@brief Function for starting timers.
@@ -842,23 +851,29 @@ int main(void)
     buttons_leds_init(&erase_bonds);
 #ifdef OLD
     ble_stack_init();
-#else
-    Softdevice::enable();
-#endif
     gap_params_init();
     gatt_init();
+#else
+    Softdevice::enable();
+    GAP::initParams();
+    Gatt::init();
+#endif
+
+
 
 #ifdef OLD
     advertising_init();
     services_init();
+    conn_params_init();
 #else
     Uuid::init();
     AdModule::init();
     // Creating service also creates its characteristics
     Service::init();
+    Connection::initParams();
 #endif
 
-    conn_params_init();
+
 #ifdef OLD
     // Module not used since I don't need bonding?
     peer_manager_init();

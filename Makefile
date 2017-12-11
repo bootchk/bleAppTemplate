@@ -92,6 +92,8 @@ SRC_FILES += \
   $(REF_DIR)/objects/softdeviceHandler.cpp \
   $(REF_DIR)/objects/gap.cpp \
   $(REF_DIR)/objects/appHandler.cpp \
+  $(REF_DIR)/objects/gatt.cpp \
+  $(REF_DIR)/objects/connection.cpp \
   
 
 # Include folders common to all targets
