@@ -82,6 +82,8 @@
 // define this to restore the original example code
 //#define OLD 1
 
+// define this to restore code using BSP, which is app code that drives leds and buttons
+//#define USE_BSP 1
 
 #ifndef OLD
 // Facades
@@ -135,8 +137,10 @@ NRF_BLE_GATT_DEF(m_gatt);    /**< GATT module instance. */
 BLE_ADVERTISING_DEF(m_advertising);                                             /**< Advertising module instance. */
 #endif
 
-
+#ifdef USE_BSP
 static uint16_t m_conn_handle = BLE_CONN_HANDLE_INVALID;                        /**< Handle of the current connection. */
+#endif
+
 
 /* YOUR_JOB: Declare all services structure your application is using
  *  BLE_XYZ_DEF(m_xyz);
@@ -473,6 +477,8 @@ static void application_timers_start(void)
 }
 #endif
 
+
+#ifdef OLD
 /**@brief Function for putting the chip into sleep mode.
  *
  * @note This function will not return.
@@ -492,7 +498,7 @@ static void sleep_mode_enter(void)
     err_code = sd_power_system_off();
     APP_ERROR_CHECK(err_code);
 }
-
+#endif
 
 /**@brief Function for handling advertising events.
  *
@@ -699,7 +705,7 @@ static void delete_bonds(void)
 // Referenced from AdModule, should be restored? or PeerManager excised.
 #endif
 
-
+#ifdef USE_BSP
 /**@brief Function for handling events from the BSP module.
  *
  * @param[in]   event   Event generated when button is pressed.
@@ -742,7 +748,7 @@ static void bsp_event_handler(bsp_event_t event)
             break;
     }
 }
-
+#endif
 
 /**@brief Function for initializing the Advertising functionality.
  */
@@ -773,6 +779,7 @@ static void advertising_init(void)
 }
 #endif
 
+#ifdef USE_BSP
 /**@brief Function for initializing buttons and leds.
  *
  * @param[out] p_erase_bonds  Will be true if the clear bonding button was pressed to wake the application up.
@@ -790,7 +797,7 @@ static void buttons_leds_init(bool * p_erase_bonds)
 
     *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
 }
-
+#endif
 
 #ifdef OLD
 /**@brief Function for initializing the nrf log module.
@@ -835,7 +842,9 @@ static void advertising_start(bool erase_bonds)
  */
 int main(void)
 {
-    bool erase_bonds;
+#ifdef USE_BSP
+	bool erase_bonds;
+#endif
 
     // Initialize.
 
@@ -847,8 +856,11 @@ int main(void)
     AppTimer::init();
 #endif
 
+#ifdef USE_BSP
     // lkk bsp depends on timers init !!!
     buttons_leds_init(&erase_bonds);
+#endif
+
 #ifdef OLD
     ble_stack_init();
     gap_params_init();
@@ -885,7 +897,11 @@ int main(void)
     application_timers_start();
     advertising_start(erase_bonds);
 #else
+#ifdef USE_BSP
     AdModule::startAdvertising(erase_bonds);
+#else
+    AdModule::startAdvertising(false);
+#endif
 #endif
 
     // Enter main loop.
