@@ -63,6 +63,10 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage_sd.c \
   $(SDK_ROOT)/components/libraries/atomic_fifo/nrf_atfifo.c \
   
+#lkk when starting LFCLK before SD is enabled
+SRC_FILES += \
+  $(SDK_ROOT)/components/drivers_nrf/clock/nrf_drv_clock.c \
+  $(SDK_ROOT)/components/drivers_nrf/common/nrf_drv_common.c \
   
  #lkk other files not used
  UNUSED_FILES += \
@@ -76,8 +80,6 @@ SRC_FILES += \
  
  #lkk files for devices not used by app
  UNUSED_FILES += \
-  $(SDK_ROOT)/components/drivers_nrf/clock/nrf_drv_clock.c \
-  $(SDK_ROOT)/components/drivers_nrf/common/nrf_drv_common.c \
   $(SDK_ROOT)/components/drivers_nrf/gpiote/nrf_drv_gpiote.c \
   $(SDK_ROOT)/components/drivers_nrf/uart/nrf_drv_uart.c \
  

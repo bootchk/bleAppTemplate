@@ -4263,7 +4263,7 @@
 // <e> TIMER_CONFIG_LOG_ENABLED - Enables logging in the module.
 //==========================================================
 #ifndef TIMER_CONFIG_LOG_ENABLED
-#define TIMER_CONFIG_LOG_ENABLED 0
+#define TIMER_CONFIG_LOG_ENABLED 4
 #endif
 // <o> TIMER_CONFIG_LOG_LEVEL  - Default Severity level
  

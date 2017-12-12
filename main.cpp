@@ -86,6 +86,7 @@
 //#define USE_BSP 1
 
 #ifndef OLD
+#include <cassert>
 // Facades
 #include "service.h"
 #include "adModule.h"
@@ -99,6 +100,8 @@
 #include "provisioner.h"
 #endif
 
+// If need app_timer when SD is not running
+#include "nrf_drv_clock.h"
 
 
 #define APP_FEATURE_NOT_SUPPORTED       BLE_GATT_STATUS_ATTERR_APP_BEGIN + 2    /**< Reply when unsupported features are requested. */
@@ -935,6 +938,7 @@ static void timeToProvisionTimerHandler(void* context) {
 		NRFLog::log("Err: time to provision but still provisioning");
 	}
 	else {
+		NRFLog::log("start provisioner.");
 		Provisioner::start();
 	}
 }
@@ -948,6 +952,31 @@ static void provisioningSuccededCallback() {
 	NRFLog::log("provision succeed");
 }
 
+/*
+ * Pointer to handler func inside a struct whose address is passed to ..._request when starting.
+ */
+static void clockStartedEventHandler(nrf_drv_clock_evt_type_t event) {
+	// Called when clock is started.
+	// We don't care when the clock starts, we know it will start and thus app_timers beging working.
+	NRFLog::log("LF clock started");
+}
+
+nrf_drv_clock_handler_item_s handlers = {
+		p_next: nullptr,
+		event_handler: clockStartedEventHandler
+};
+
+static void startLFClock() {
+	ret_code_t err_code;
+
+	err_code = nrf_drv_clock_init();
+	APP_ERROR_CHECK(err_code);
+
+	nrf_drv_clock_lfclk_request(nullptr);	// or (&handlers);
+
+}
+
+
 
 /*
  * Using Provisioner
@@ -955,7 +984,12 @@ static void provisioningSuccededCallback() {
 int main(void)
 {
     NRFLog::enable();
+
+    startLFClock();
+
+    // Requires LFCLK running
     AppTimer::init();
+
     Provisioner::enable(provisioningSuccededCallback, provisioningFailedCallback);
 
     // Provisioner also created a timer
@@ -968,8 +1002,9 @@ int main(void)
 
     AppTimer::createRepeating(&provisionTimeTimerID, timeToProvisionTimerHandler);
 
-    AppTimer::start(provisionTimeTimerID, 200);
-    // assert timer is started
+    NRFLog::log("Start provisioning timer");
+    AppTimer::start(provisionTimeTimerID, 1000);	// every second
+    // assert repeating timer is started
 
 
 
@@ -978,12 +1013,24 @@ int main(void)
     	// Here you do "normal" app, including using radio if not provisioning
 
     	if (Provisioner::isProvisioning()) {
+    		NRFLog::log("Provisioning sleep");
     		Provisioner::sleep();
     	}
 
     	else {
-    		// Can sleep another method, without regard to SD, until next time to provision
-    		// TODO WEV
+    		// Sleep until next time to provision
+    		// Use directly __WFE and __SEV macros since SoftDevice is not enabled
+    		NRFLog::log("Nonprovisioning sleep");
+
+    		// Clock must be running else timers not work
+    		assert(nrf_drv_clock_lfclk_is_running());
+
+    		// Wait for event.
+    		__WFE();
+
+    		// Clear Event Register.
+    		__SEV();
+    		__WFE();
     	}
     }
 }
