@@ -20,29 +20,23 @@ $(OUTPUT_DIRECTORY)/nrf52832_xxaa.out: \
 SRC_FILES += \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_rtt.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_serial.c \
-  $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_uart.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_default_backends.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_frontend.c \
   $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_str_formatter.c \
+  $(SDK_ROOT)/external/fprintf/nrf_fprintf.c \
+  $(SDK_ROOT)/external/fprintf/nrf_fprintf_format.c \
+  $(SDK_ROOT)/components/libraries/util/app_util_platform.c \
   $(SDK_ROOT)/components/libraries/util/app_error.c \
   $(SDK_ROOT)/components/libraries/util/app_error_weak.c \
   $(SDK_ROOT)/components/libraries/scheduler/app_scheduler.c \
   $(SDK_ROOT)/components/libraries/timer/app_timer.c \
-  $(SDK_ROOT)/components/libraries/util/app_util_platform.c \
-  $(SDK_ROOT)/components/libraries/crc16/crc16.c \
   $(SDK_ROOT)/components/libraries/hardfault/hardfault_implementation.c \
-  $(SDK_ROOT)/components/libraries/util/nrf_assert.c \
-  $(SDK_ROOT)/components/libraries/atomic_fifo/nrf_atfifo.c \
-  $(SDK_ROOT)/components/libraries/balloc/nrf_balloc.c \
-  $(SDK_ROOT)/external/fprintf/nrf_fprintf.c \
-  $(SDK_ROOT)/external/fprintf/nrf_fprintf_format.c \
-  $(SDK_ROOT)/components/libraries/experimental_memobj/nrf_memobj.c \
   $(SDK_ROOT)/components/libraries/experimental_section_vars/nrf_section_iter.c \
   $(SDK_ROOT)/components/libraries/strerror/nrf_strerror.c \
-  $(SDK_ROOT)/components/libraries/util/sdk_mapped_flags.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_Syscalls_GCC.c \
   $(SDK_ROOT)/external/segger_rtt/SEGGER_RTT_printf.c \
+  $(SDK_ROOT)/components/libraries/util/sdk_mapped_flags.c \
   $(SDK_ROOT)/components/ble/common/ble_advdata.c \
   $(SDK_ROOT)/components/ble/ble_advertising/ble_advertising.c \
   $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
@@ -54,6 +48,31 @@ SRC_FILES += \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_ble.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_soc.c \
+ 
+ 
+ #lkk required by nrf_log_frontend
+ SRC_FILES += \
+  $(SDK_ROOT)/components/libraries/balloc/nrf_balloc.c \
+  $(SDK_ROOT)/components/libraries/experimental_memobj/nrf_memobj.c \
+  
+ # lkk files for flash abstraction library
+ # advertising module requires
+SRC_FILES += \
+  $(SDK_ROOT)/components/libraries/fds/fds.c \
+  $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage.c \
+  $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage_sd.c \
+  $(SDK_ROOT)/components/libraries/atomic_fifo/nrf_atfifo.c \
+  
+  
+ #lkk other files not used
+ UNUSED_FILES += \
+  $(SDK_ROOT)/components/libraries/crc16/crc16.c \
+  $(SDK_ROOT)/components/libraries/util/nrf_assert.c \
+ 
+  #lkk files for logging backends not used (only using rtt)
+ UNUSED_FILES += \
+  $(SDK_ROOT)/components/libraries/experimental_log/src/nrf_log_backend_uart.c \
+ 
  
  #lkk files for devices not used by app
  UNUSED_FILES += \
@@ -74,13 +93,6 @@ SRC_FILES += \
  
  UNUSED_FILES += \
    $(SDK_ROOT)/components/libraries/pwr_mgmt/nrf_pwr_mgmt.c \
-   
- # lkk files for flash abstraction library
- # advertising module requires
-SRC_FILES += \
-  $(SDK_ROOT)/components/libraries/fds/fds.c \
-  $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage.c \
-  $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage_sd.c \
  
 # lkk excise files for peer manager
 UNUSED_FILES += \
@@ -98,11 +110,13 @@ UNUSED_FILES += \
   
 SRC_FILES += \
   $(PROJ_DIR)/main.cpp \
+  $(REF_DIR)/objects/provisioner.cpp \
+  $(REF_DIR)/objects/softdevice.cpp \
+  $(REF_DIR)/objects/bleProtocol.cpp \
   $(REF_DIR)/objects/service.cpp \
   $(REF_DIR)/objects/uuid.cpp \
   $(REF_DIR)/objects/characteristic.cpp \
   $(REF_DIR)/objects/adModule.cpp \
-  $(REF_DIR)/objects/softdevice.cpp \
   $(REF_DIR)/objects/nrfLog.cpp \
   $(REF_DIR)/objects/appTimer.cpp \
   $(REF_DIR)/objects/softdeviceHandler.cpp \
@@ -110,6 +124,7 @@ SRC_FILES += \
   $(REF_DIR)/objects/appHandler.cpp \
   $(REF_DIR)/objects/gatt.cpp \
   $(REF_DIR)/objects/connection.cpp \
+  
   
 
 # Include folders common to all targets

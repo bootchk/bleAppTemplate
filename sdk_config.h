@@ -2239,7 +2239,7 @@
 // <e> FDS_ENABLED - fds - Flash data storage module
 //==========================================================
 #ifndef FDS_ENABLED
-#define FDS_ENABLED 1
+#define FDS_ENABLED 0
 #endif
 // <h> Pages - Virtual page settings
 

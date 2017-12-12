@@ -96,6 +96,7 @@
 #include "gap.h"
 #include "gatt.h"
 #include "connection.h"
+#include "provisioner.h"
 #endif
 
 
@@ -811,6 +812,7 @@ static void log_init(void)
 }
 #endif
 
+#ifdef OLD
 /**@brief Function for the Power manager.
  */
 static void power_manage(void)
@@ -818,6 +820,7 @@ static void power_manage(void)
     ret_code_t err_code = sd_app_evt_wait();
     APP_ERROR_CHECK(err_code);
 }
+#endif
 
 #ifdef OLD
 /**@brief Function for starting advertising.
@@ -838,8 +841,11 @@ static void advertising_start(bool erase_bonds)
 }
 #endif
 
-/**@brief Function for application main entry.
- */
+
+
+
+
+#ifdef USE_ORIGINAL_MAIN
 int main(void)
 {
 #ifdef USE_BSP
@@ -914,8 +920,73 @@ int main(void)
         }
     }
 }
+#endif
 
 
+
+APP_TIMER_DEF(provisionTimeTimerID);
+
+static void timeToProvisionTimerHandler(void* context) {
+	if ( Provisioner::isProvisioning() ) {
+		/*
+		 * Unexpected:
+		 * Still provisioning from last timeout
+		 */
+		NRFLog::log("Err: time to provision but still provisioning");
+	}
+	else {
+		Provisioner::start();
+	}
+}
+
+static void provisioningFailedCallback() {
+	NRFLog::log("provision fail");
+}
+
+static void provisioningSuccededCallback() {
+	// TODO pass the provisioned value
+	NRFLog::log("provision succeed");
+}
+
+
+/*
+ * Using Provisioner
+ */
+int main(void)
+{
+    NRFLog::enable();
+    AppTimer::init();
+    Provisioner::enable(provisioningSuccededCallback, provisioningFailedCallback);
+
+    // Provisioner also created a timer
+
+
+    /*
+     * Start timer until next time to provision.
+     * More generally, you provision subservient to your normal processing, say at regular intervals.
+     */
+
+    AppTimer::createRepeating(&provisionTimeTimerID, timeToProvisionTimerHandler);
+
+    AppTimer::start(provisionTimeTimerID, 200);
+    // assert timer is started
+
+
+
+    while(true) {
+
+    	// Here you do "normal" app, including using radio if not provisioning
+
+    	if (Provisioner::isProvisioning()) {
+    		Provisioner::sleep();
+    	}
+
+    	else {
+    		// Can sleep another method, without regard to SD, until next time to provision
+    		// TODO WEV
+    	}
+    }
+}
 /**
  * @}
  */
