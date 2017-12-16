@@ -13,6 +13,9 @@ PROJ_DIR := .
 # Referenced directory in another project under separate version control
 REF_DIR := /home/bootch/git/multiProtocolNordic/src
 
+# Use radioSoC library
+REF2_DIR := /home/bootch/git/radioSoC/src
+
 $(OUTPUT_DIRECTORY)/nrf52832_xxaa.out: \
   LINKER_SCRIPT  := ble_app_template_gcc_nrf52.ld
 
@@ -29,7 +32,6 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/util/app_error.c \
   $(SDK_ROOT)/components/libraries/util/app_error_weak.c \
   $(SDK_ROOT)/components/libraries/scheduler/app_scheduler.c \
-  $(SDK_ROOT)/components/libraries/timer/app_timer.c \
   $(SDK_ROOT)/components/libraries/hardfault/hardfault_implementation.c \
   $(SDK_ROOT)/components/libraries/experimental_section_vars/nrf_section_iter.c \
   $(SDK_ROOT)/components/libraries/strerror/nrf_strerror.c \
@@ -39,7 +41,6 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/util/sdk_mapped_flags.c \
   $(SDK_ROOT)/components/ble/common/ble_advdata.c \
   $(SDK_ROOT)/components/ble/ble_advertising/ble_advertising.c \
-  $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
   $(SDK_ROOT)/components/ble/common/ble_conn_state.c \
   $(SDK_ROOT)/components/ble/common/ble_srv_common.c \
   $(SDK_ROOT)/components/ble/nrf_ble_gatt/nrf_ble_gatt.c \
@@ -49,6 +50,10 @@ SRC_FILES += \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_ble.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_soc.c \
  
+ #lkk if using app_timer or connections module (which requires app_timer)
+ UNUSED_FILES += \
+    $(SDK_ROOT)/components/libraries/timer/app_timer.c \
+    $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
  
  #lkk required by nrf_log_frontend
  SRC_FILES += \
@@ -112,6 +117,7 @@ UNUSED_FILES += \
   
 SRC_FILES += \
   $(PROJ_DIR)/main.cpp \
+  $(PROJ_DIR)/main2.cpp \
   $(REF_DIR)/objects/provisioner.cpp \
   $(REF_DIR)/objects/softdevice.cpp \
   $(REF_DIR)/objects/bleProtocol.cpp \
@@ -120,13 +126,15 @@ SRC_FILES += \
   $(REF_DIR)/objects/characteristic.cpp \
   $(REF_DIR)/objects/adModule.cpp \
   $(REF_DIR)/objects/nrfLog.cpp \
-  $(REF_DIR)/objects/appTimer.cpp \
   $(REF_DIR)/objects/softdeviceHandler.cpp \
   $(REF_DIR)/objects/gap.cpp \
   $(REF_DIR)/objects/appHandler.cpp \
   $(REF_DIR)/objects/gatt.cpp \
   $(REF_DIR)/objects/connection.cpp \
+  $(REF_DIR)/objects/sleeper.cpp \
+  $(REF_DIR)/objects/timerAdaptor.cpp \
   
+# $(REF_DIR)/objects/appTimer.cpp \
   
 
 # Include folders common to all targets
@@ -251,9 +259,18 @@ INC_FOLDERS += \
 
 INC_FOLDERS += \
   $(REF_DIR)/objects \
+  
+# 
+INC_FOLDERS += \
+  $(REF2_DIR)/clock \
 
 # Libraries common to all targets
 LIB_FILES += \
+\
+# Libraries specific to this project
+LIB_FILES += \
+   /home/bootch/git/radioSoC/Debug52/libradioSoC52.a \
+   /home/bootch/git/nRF5x/DebugnRF52/libnRF5x52.a
 
 # Optimization flags
 OPT = -O0 -g3
@@ -275,10 +292,14 @@ CFLAGS += -DSWI_DISABLE0
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mthumb -mabi=aapcs
 CFLAGS +=  -Wall -Werror
-CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+
 # keep every function in a separate section, this allows linker to discard unused ones
 CFLAGS += -ffunction-sections -fdata-sections -fno-strict-aliasing
 CFLAGS += -fno-builtin -fshort-enums 
+
+#lkk if using fpu, also see LDFLAGS
+#CFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+CFLAGS += -mfloat-abi=soft
 
 # C++ flags common to all targets
 CXXFLAGS += $(OPT) -std=c++14
@@ -303,7 +324,8 @@ ASMFLAGS += -DSWI_DISABLE0
 LDFLAGS += $(OPT)
 LDFLAGS += -mthumb -mabi=aapcs -L $(TEMPLATE_PATH) -T$(LINKER_SCRIPT)
 LDFLAGS += -mcpu=cortex-m4
-LDFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+#LDFLAGS += -mfloat-abi=hard -mfpu=fpv4-sp-d16
+LDFLAGS += -mfloat-abi=soft
 # let linker dump unused sections
 LDFLAGS += -Wl,--gc-sections
 # use newlib in nano version
