@@ -54,12 +54,18 @@ SRC_FILES += \
  UNUSED_FILES += \
     $(SDK_ROOT)/components/libraries/timer/app_timer.c \
     $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
+    
+#lkk when starting LFCLK before SD is enabled
+UNUSED_FILES += \
+  $(SDK_ROOT)/components/drivers_nrf/clock/nrf_drv_clock.c \
+  $(SDK_ROOT)/components/drivers_nrf/common/nrf_drv_common.c \
  
  #lkk required by nrf_log_frontend
  SRC_FILES += \
   $(SDK_ROOT)/components/libraries/balloc/nrf_balloc.c \
   $(SDK_ROOT)/components/libraries/experimental_memobj/nrf_memobj.c \
-  
+
+ 
  # lkk files for flash abstraction library
  # advertising module requires
 SRC_FILES += \
@@ -67,11 +73,6 @@ SRC_FILES += \
   $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage.c \
   $(SDK_ROOT)/components/libraries/fstorage/nrf_fstorage_sd.c \
   $(SDK_ROOT)/components/libraries/atomic_fifo/nrf_atfifo.c \
-  
-#lkk when starting LFCLK before SD is enabled
-SRC_FILES += \
-  $(SDK_ROOT)/components/drivers_nrf/clock/nrf_drv_clock.c \
-  $(SDK_ROOT)/components/drivers_nrf/common/nrf_drv_common.c \
   
  #lkk other files not used
  UNUSED_FILES += \

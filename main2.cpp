@@ -21,6 +21,9 @@
 #include "connection.h"
 #endif
 
+#include "softdevice.h"
+
+
 
 static void provisioningFailedCallback() {
 	NRFLog::log("provision fail");
@@ -122,6 +125,13 @@ int main(void)
     Provisioner::startClocks();
 
     /*
+     * Enable SD so it starts the LFClock
+     */
+    Softdevice::enable();
+    Softdevice::disable();
+
+
+    /*
      * Start timer until next time to provision.
      * More generally, you provision subservient to your normal processing, say at regular intervals.
      */
@@ -165,7 +175,9 @@ int main(void)
     		__SEV();
     		__WFE();
 #else
+    		NRFLog::log("Start provisioning");
     		Provisioner::provisionWithSleep();
+    		NRFLog::log("End provisioning");
 
     		// simple spin delay between provisionings
     		nrf_delay_ms(4000);
