@@ -55,8 +55,8 @@ SRC_FILES += \
     $(SDK_ROOT)/components/libraries/timer/app_timer.c \
     $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
     
-#lkk when starting LFCLK before SD is enabled
-UNUSED_FILES += \
+#lkk using clock module (SD compatible)
+SRC_FILES += \
   $(SDK_ROOT)/components/drivers_nrf/clock/nrf_drv_clock.c \
   $(SDK_ROOT)/components/drivers_nrf/common/nrf_drv_common.c \
  
@@ -119,6 +119,7 @@ UNUSED_FILES += \
 SRC_FILES += \
   $(PROJ_DIR)/main.cpp \
   $(PROJ_DIR)/main2.cpp \
+  $(PROJ_DIR)/main3.cpp \
   $(REF_DIR)/objects/provisioner.cpp \
   $(REF_DIR)/objects/softdevice.cpp \
   $(REF_DIR)/objects/bleProtocol.cpp \
@@ -132,7 +133,7 @@ SRC_FILES += \
   $(REF_DIR)/objects/appHandler.cpp \
   $(REF_DIR)/objects/gatt.cpp \
   $(REF_DIR)/objects/connection.cpp \
-  $(REF_DIR)/objects/sleeper.cpp \
+  $(REF_DIR)/objects/softdeviceSleeper.cpp \
   $(REF_DIR)/objects/timerAdaptor.cpp \
   
 # $(REF_DIR)/objects/appTimer.cpp \
