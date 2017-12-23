@@ -50,10 +50,19 @@ SRC_FILES += \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_ble.c \
   $(SDK_ROOT)/components/softdevice/common/nrf_sdh_soc.c \
  
- #lkk if using app_timer or connections module (which requires app_timer)
- UNUSED_FILES += \
-    $(SDK_ROOT)/components/libraries/timer/app_timer.c \
-    $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
+#lkk when using app_timer or connections module (which requires app_timer)
+#lkk and facade to app_timer
+# UNUSED_FILES += 
+ SRC_FILES += \
+  $(SDK_ROOT)/components/libraries/timer/app_timer.c \
+  $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
+  $(REF_DIR)/objects/appTimer.cpp \
+  
+#lkk
+# else using TimerAdaptor to Timer in radioSoc
+# or using null TimerAdaptor
+SRC_FILES += \
+  $(REF_DIR)/objects/timerAdaptor.cpp \
     
 #lkk using clock module (SD compatible)
 SRC_FILES += \
@@ -116,6 +125,8 @@ UNUSED_FILES += \
   $(SDK_ROOT)/components/ble/peer_manager/security_dispatcher.c \
   $(SDK_ROOT)/components/ble/peer_manager/security_manager.c \
   
+  
+  
 SRC_FILES += \
   $(PROJ_DIR)/main.cpp \
   $(PROJ_DIR)/main2.cpp \
@@ -134,9 +145,7 @@ SRC_FILES += \
   $(REF_DIR)/objects/gatt.cpp \
   $(REF_DIR)/objects/connection.cpp \
   $(REF_DIR)/objects/softdeviceSleeper.cpp \
-  $(REF_DIR)/objects/timerAdaptor.cpp \
-  
-# $(REF_DIR)/objects/appTimer.cpp \
+
   
 
 # Include folders common to all targets
@@ -270,7 +279,9 @@ INC_FOLDERS += \
 LIB_FILES += \
 \
 # Libraries specific to this project
-LIB_FILES += \
+# lkk not needed for main1
+# LIB_FILES += 
+UNUSED_LIBS += \
    /home/bootch/git/radioSoC/Debug52/libradioSoC52.a \
    /home/bootch/git/nRF5x/DebugnRF52/libnRF5x52.a
 

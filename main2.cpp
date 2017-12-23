@@ -31,7 +31,7 @@ static void provisioningSuccededCallback() {
  * Using Provisioner
  * Simple delay between provisioning
  */
-int main(void)
+int main2(void)
 {
 	NRFLog::enable();
 

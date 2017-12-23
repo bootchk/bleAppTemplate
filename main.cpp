@@ -97,6 +97,7 @@
 #include "gatt.h"
 #include "connection.h"
 #include "provisioner.h"
+#include "softdeviceSleeper.h"
 #endif
 
 
@@ -845,10 +846,11 @@ static void advertising_start(bool erase_bonds)
 
 
 
-// see main2.cpp for alternative main
 
-#ifdef USE_ORIGINAL_MAIN
-int main(void)
+
+
+
+int main1(void)
 {
 #ifdef USE_BSP
 	bool erase_bonds;
@@ -861,6 +863,8 @@ int main(void)
     timers_init();
 #else
     NRFLog::enable();
+
+
     AppTimer::init();
 #endif
 
@@ -918,12 +922,22 @@ int main(void)
         if (NRF_LOG_PROCESS() == false)
         {
         	NRF_LOG_INFO("Sleep.");
-            power_manage();
+#ifdef OLD
+        	power_manage();
+#else
+        	SoftdeviceSleeper::sleepInSD();
+#endif
         }
     }
 }
-#endif
 
+
+extern int main2();
+
+// choose alternative main
+int main(void) {
+	main2();
+}
 
 
 /**

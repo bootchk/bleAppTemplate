@@ -6,18 +6,25 @@ Status: work in progress
 Not a product, a template for testing other libraries.
 
 History/Goals
--
+=
 
 The project has three mains() that follow the history.
 
+Main1: ble_app_template augmented with custom service
+-
 One main started from Nordic example ble_app_template.  
 I gradually inserted "#ifdef OLD" and replaced code with facade classes, keeping the app working as a BLE peripheral (but having no BT services.)  
-Then I added a service and characteristic.
-I hacked out the board support (I don't want LED's and buttons.)
-I hacked out the peer manager (I don't want bonding.)
-I hacked out app_timer (its not reliable) and the "connections module" (don't need connection parameter negotiation?)
+Then I added a service and characteristic.  
+I hacked out the board support (I don't want LED's and buttons.)  
+I hacked out the peer manager (I don't want bonding.)  
+I hacked out app_timer (its not reliable) and the "connections module" (don't need connection parameter negotiation?)  
+
 In this form, the app appears on any BT sniffer.  
-In the process of developing, I learned mostly about ordinary BT concepts and the Nordic SDK.
+
+In the process of developing, I learned mostly about ordinary BT concepts and the Nordic SDK.  
+
+Main2: Provisioner, spinning
+-
 
 The second main extracted the essentials from the first main (as modified.)  
 Then I changed the app to be multiprotocol: supporting BT and another proprietary protocol.  
@@ -25,19 +32,24 @@ BT was used for "provisioning", i.e. configuring the app through a writeable BT 
 The provisioning is periodic: the app sleeeps mostly, and only advertises its provisioning for short durations.  
 The provisioner (a BT central) is expected to poll (scan) for a long time to find a provisionable peripheral.  
 The second main just spins (waits) between provisionings.
+
 In this form, a sniffer might occasionally see the app, but the app doesn't stay awake long enough for a sniffer to write to a characteristic.  
 (A special BT app for provisioning central is required, e.g. to be written using a FOSS project for BT using Swift on iOS.)
+
 In the process of developing, I learned mostly about the complexities of developing multiprotocol using the Nordic SDK.
 In hindsight, to develop a proprietary protocol, you need low-level API (HAL) to the hw.
 But once you intend to use multiprotocol, you need to use higher-level API to cooperate with the Softdevice.
 
+
+Main3: Provisioner, sleeping
+-
 The third main doesn't spin between provisionings, but uses a timer.  
 I found that the libraries I was using for the proprietary protocol are incompatible with the Softdevice.  
 The Softdevice blocks or restricts access to many devices (radio, low frequency clock, power/clock peripheral).  
 To cooperate with the Softdevice, you must use "modules" from the Nordic SDK, instead of the HAL 
 (which gives you unrestricted and non-cooperating access to device registers.)  
 This main uses libraries in process of being changed to be SD compatible.  
-In this form, the app is still a "provisioner" service.
+In this form, the app is still a "provisioner" service.  
 But it is ready for integration with a proprietary protocol that uses the SD compatible libraries (radioSoC and nRF5x.)
 
 
