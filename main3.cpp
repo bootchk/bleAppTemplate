@@ -22,7 +22,9 @@
 namespace {
 
 
+#ifdef NOT_USED
 void timeToProvisionTimerHandler(TimerInterruptReason) {
+#ifdef OLD
 	if ( Provisioner::isProvisioning() ) {
 		/*
 		 * Unexpected:
@@ -35,11 +37,14 @@ void timeToProvisionTimerHandler(TimerInterruptReason) {
 		NRFLog::log("start provisioner.");
 		Provisioner::start();
 	}
+#endif
+	NRFLog::log("Provisioning time timer expired");
+	// Does nothing but set reasonForWake
 }
 
 
 void startProvisionTimeTimer() {
-	NRFLog::log("Start provisioning timer");
+	NRFLog::log("Start provisioning time timer");
 
 	// assert LongClock is running
 	// assert SD disabled
@@ -47,21 +52,17 @@ void startProvisionTimeTimer() {
 	// Using my own timer class
 	TimerAdaptor::start(4000, timeToProvisionTimerHandler);	// every second
 }
+#endif
 
 
 void provisioningFailedCallback() {
 	NRFLog::log("provision fail");
-
-	// set alarm for next provisioning
-	startProvisionTimeTimer();
 }
+
 
 void provisioningSuccededCallback() {
 	// TODO pass the provisioned value
 	NRFLog::log("provision succeed");
-
-	// set alarm for next provisioning
-	startProvisionTimeTimer();
 }
 
 
@@ -116,6 +117,40 @@ void startClocksAndTimers() {
 
 
 
+void sleepUntilNextProvisioningSession() {
+#ifdef OLD
+	this is all wrong, the handler timer is not setting reasonForWake
+	/*
+	 * Start timer until next time to provision.
+	 * More generally, you provision subservient to your normal processing, say at regular intervals.
+	 */
+	startProvisionTimeTimer();
+	/*
+	 * assert single shot timer is started.
+	 * When it expires, it starts provisioning.
+	 */
+
+	/*
+	 *  Sleep until next time to provision.
+	 *  Next event should be Timer timeout.
+	 *  assert ProvisionTimeTimer is armed
+	 */
+
+	// Use directly __WFE and __SEV macros since SoftDevice is not enabled
+	NRFLog::log("Nonprovisioning sleep");
+
+	Sleeper::sleepUntilSpecificEvent(ReasonForWake::SleepTimerExpired);
+
+	/*
+	 * Assert there was only one timer, provision time timer.
+	 * It expired.
+	 */
+#endif
+
+	Sleeper::sleepDuration(8000);
+}
+
+
 /*
  * Using Provisioner
  * Using a Timer between provisionings.
@@ -135,50 +170,20 @@ int main3(void)
 	Provisioner::startClocks();
 
 
-	/*
-	 * Start timer until next time to provision.
-	 * More generally, you provision subservient to your normal processing, say at regular intervals.
-	 */
-	startProvisionTimeTimer();
-	/*
-	 * assert single shot timer is started.
-	 * When it expires, it starts provisioning.
-	 */
-
-
 	while(true) {
 
 		// Here you do "normal" app, including using radio if not provisioning
 
-		if (Provisioner::isProvisioning()) {
-			NRFLog::log("Provisioning sleep");
-			Provisioner::sleep();
+		// Start a provisioning session.
+		Provisioner::provisionWithSleep();
 
-			/*
-			 * On wake:
-			 * SD might be running still (events unrelated to Provisioner, such as clock rollover.)
-			 *
-			 * Provisioner might have finished (expired, or provisioned callback) and SD shutdown.
-			 * In that case, provision time timer is armed again.
-			 */
-		}
-		else {
-			/*
-			 *  Sleep until next time to provision.
-			 *  Next event should be Timer timeout.
-			 *  assert ProvisionTimeTimer is armed
-			 */
+		/*
+		 * On wake:
+		 * SD is disabled.
+		 * Provisioning succeeded or failed.
+		 */
 
-			// Use directly __WFE and __SEV macros since SoftDevice is not enabled
-			NRFLog::log("Nonprovisioning sleep");
+		sleepUntilNextProvisioningSession();
 
-			Sleeper::sleepUntilSpecificEvent(ReasonForWake::SleepTimerExpired);
-
-			/*
-			 * Assert there was only one timer, provision time timer.
-			 * It expired and started provisioning.
-			 */
-		}
-		// assert is provisioning or provision time timer is armed
 	}
 }

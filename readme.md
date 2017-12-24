@@ -33,7 +33,8 @@ The provisioning is periodic: the app sleeeps mostly, and only advertises its pr
 The provisioner (a BT central) is expected to poll (scan) for a long time to find a provisionable peripheral.  
 The second main just spins (waits) between provisionings.
 
-In this form, a sniffer might occasionally see the app, but the app doesn't stay awake long enough for a sniffer to write to a characteristic.  
+In this form, a sniffer might occasionally see the app, but the app doesn't stay awake long enough for a sniffer to write to a characteristic.
+In this form, on the RTT log, you see it regularly start and end provisioning sessions.  You might see a connect event from a BT sniffer.  
 (A special BT app for provisioning central is required, e.g. to be written using a FOSS project for BT using Swift on iOS.)
 
 In the process of developing, I learned mostly about the complexities of developing multiprotocol using the Nordic SDK.

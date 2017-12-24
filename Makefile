@@ -278,12 +278,14 @@ INC_FOLDERS += \
 # Libraries common to all targets
 LIB_FILES += \
 \
+
 # Libraries specific to this project
 # lkk not needed for main1
-# LIB_FILES += 
-UNUSED_LIBS += \
+# UNUSED_LIBS +=
+ LIB_FILES += \
    /home/bootch/git/radioSoC/Debug52/libradioSoC52.a \
-   /home/bootch/git/nRF5x/DebugnRF52/libnRF5x52.a
+   /home/bootch/git/nRF5x/DebugnRF52/libnRF5x52.a \
+   /home/bootch/git/embeddedMath/Debug52/libembeddedMath52.a \
 
 # Optimization flags
 OPT = -O0 -g3

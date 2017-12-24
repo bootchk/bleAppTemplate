@@ -925,7 +925,7 @@ int main1(void)
 #ifdef OLD
         	power_manage();
 #else
-        	SoftdeviceSleeper::sleepInSD();
+        	SoftdeviceSleeper::sleepInSDUntilAnyEvent();
 #endif
         }
     }
@@ -933,10 +933,11 @@ int main1(void)
 
 
 extern int main2();
+extern int main3();
 
 // choose alternative main
 int main(void) {
-	main2();
+	main3();
 }
 
 
