@@ -147,7 +147,7 @@ void sleepUntilNextProvisioningSession() {
 	 */
 #endif
 
-	Sleeper::sleepDuration(8000);
+	Sleeper::sleepDuration(800000);	// 2.4s
 }
 
 
@@ -183,7 +183,7 @@ int main3(void)
 		 * Provisioning succeeded or failed.
 		 */
 
+		NRFLog::log("Sleeping between provisionings.");
 		sleepUntilNextProvisioningSession();
-
 	}
 }
