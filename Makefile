@@ -53,7 +53,7 @@ SRC_FILES += \
 #lkk when using app_timer or connections module (which requires app_timer)
 #lkk and facade to app_timer
 # UNUSED_FILES += 
- SRC_FILES += \
+UNUSED_FILES +=  \
   $(SDK_ROOT)/components/libraries/timer/app_timer.c \
   $(SDK_ROOT)/components/ble/common/ble_conn_params.c \
   $(REF_DIR)/objects/appTimer.cpp \
@@ -137,7 +137,6 @@ SRC_FILES += \
   $(REF_DIR)/objects/service.cpp \
   $(REF_DIR)/objects/uuid.cpp \
   $(REF_DIR)/objects/characteristic.cpp \
-  $(REF_DIR)/objects/adModule.cpp \
   $(REF_DIR)/objects/nrfLog.cpp \
   $(REF_DIR)/objects/softdeviceHandler.cpp \
   $(REF_DIR)/objects/gap.cpp \
@@ -145,6 +144,17 @@ SRC_FILES += \
   $(REF_DIR)/objects/gatt.cpp \
   $(REF_DIR)/objects/connection.cpp \
   $(REF_DIR)/objects/softdeviceSleeper.cpp \
+  $(REF_DIR)/objects/protocolStack.cpp \
+  $(REF_DIR)/objects/advertiser.cpp \
+  
+# choice of advertising implementation
+#
+# direct advertisement implemented by two classes
+SRC_FILES += \
+  $(REF_DIR)/objects/advertiserDirect.cpp \
+  $(REF_DIR)/objects/advertisement.cpp \
+  
+#   $(REF_DIR)/objects/adModule.cpp \
 
   
 
