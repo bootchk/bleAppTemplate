@@ -403,3 +403,22 @@ SDK_CONFIG_FILE := ../config/sdk_config.h
 CMSIS_CONFIG_TOOL := $(SDK_ROOT)/external_tools/cmsisconfig/CMSIS_Configuration_Wizard.jar
 sdk_config:
 	java -jar $(CMSIS_CONFIG_TOOL) $(SDK_CONFIG_FILE)
+	
+
+# lkk make library, using make vars defined by Makefile.common
+libBLEProvisioner.a: $(OUTPUT_DIRECTORY)/*.o
+	$(info $(call PROGRESS,Archiving target: $@))
+	$(GENERATE_LD_INPUT_FILE)
+	$(AR) $(LD_INPUT) -o $@
+	
+#	$(NO_ECHO)$(SIZE) $@
+	
+	
+#	$(AR) $@ $^
+	
+#	$(NO_ECHO)$(GENERATE_LD_INPUT_FILE)
+#	$(LD_INPUT)
+#	$(NO_ECHO)$(CC) $(LDFLAGS) $(LD_INPUT) -Wl,-Map=$(@:.out=.map) -o $@
+#	ar ru $@ $^
+#   ranlib $@
+
